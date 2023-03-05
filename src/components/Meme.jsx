@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 
 export default function Meme() {
   const [meme, setMeme] = useState({
-    topText: "",
-    bottomText: "",
     randomImage: "http://i.imgflip.com/1bij.jpg",
   });
-  const [message, setMessage] = useState({
-    errorMessage: "",
+  const [text, setText] = useState({
+    topText: "",
+    bottomText: "",
+    errorText: "",
   });
   const [allMemes, setAllMemes] = useState([]);
 
@@ -18,9 +18,9 @@ export default function Meme() {
         const data = await res.json();
         setAllMemes(data.data.memes);
       } catch (error) {
-        setMessage((prevMessage) => ({
-          ...prevMessage,
-          errorMessage: `O-oh, we have "${error}" in the house`,
+        setText((prevText) => ({
+          ...prevText,
+          errorText: `O-oh, we have "${error}" in the house`,
         }));
       }
     }
@@ -38,8 +38,8 @@ export default function Meme() {
 
   function handleChange(event) {
     const { name, value } = event.target;
-    setMeme((prevMeme) => ({
-      ...prevMeme,
+    setText((prevText) => ({
+      ...prevText,
       [name]: value,
     }));
   }
@@ -52,7 +52,7 @@ export default function Meme() {
           placeholder="Top text"
           className="form--input"
           name="topText"
-          value={meme.topText}
+          value={text.topText}
           onChange={handleChange}
         />
         <input
@@ -60,7 +60,7 @@ export default function Meme() {
           placeholder="Bottom text"
           className="form--input"
           name="bottomText"
-          value={meme.bottomText}
+          value={text.bottomText}
           onChange={handleChange}
         />
         <button className="form--button" onClick={getMemeImage}>
@@ -68,10 +68,10 @@ export default function Meme() {
         </button>
       </div>
       <div className="meme">
-        {message.errorMessage && <h2>{message.errorMessage}</h2>}
+        {text.errorText && <h2>{text.errorText}</h2>}
         <img src={meme.randomImage} className="meme--image" />
-        <h2 className="meme--text top">{meme.topText}</h2>
-        <h2 className="meme--text bottom">{meme.bottomText}</h2>
+        <h2 className="meme--text top">{text.topText}</h2>
+        <h2 className="meme--text bottom">{text.bottomText}</h2>
       </div>
     </main>
   );
