@@ -1,30 +1,40 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Meme() {
-  const [meme, setMeme] = React.useState({
+  const [meme, setMeme] = useState({
     topText: "",
     bottomText: "",
     randomImage: "http://i.imgflip.com/1bij.jpg",
+  });
+  const [message, setMessage] = useState({
+    errorMessage: "",
   });
   const [allMemes, setAllMemes] = useState([]);
 
   useEffect(() => {
     async function getMemes() {
-      const res = await fetch("https://api.imgflip.com/get_memes");
-      const data = await res.json();
-      setAllMemes(data.data.memes);
+      try {
+        const res = await fetch("https://api.imgflip.com/get_memes");
+        const data = await res.json();
+        setAllMemes(data.data.memes);
+      } catch (error) {
+        setMessage((prevMessage) => ({
+          ...prevMessage,
+          errorMessage: `O-oh, we have "${error}" in the house`,
+        }));
+      }
     }
     getMemes();
   }, []);
 
-  function getMemeImage() {
+  const getMemeImage = () => {
     const randomNumber = Math.floor(Math.random() * allMemes.length);
     const url = allMemes[randomNumber].url;
     setMeme((prevMeme) => ({
       ...prevMeme,
       randomImage: url,
     }));
-  }
+  };
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -58,6 +68,7 @@ export default function Meme() {
         </button>
       </div>
       <div className="meme">
+        {message.errorMessage && <h2>{message.errorMessage}</h2>}
         <img src={meme.randomImage} className="meme--image" />
         <h2 className="meme--text top">{meme.topText}</h2>
         <h2 className="meme--text bottom">{meme.bottomText}</h2>
